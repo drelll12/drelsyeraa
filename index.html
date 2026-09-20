@@ -1,48 +1,69 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>For Syera - ASCII Love</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#fff;font-family:'JetBrains Mono',monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;overflow:hidden}
-#lyric{font-size:52px;font-weight:800;text-align:center;min-height:90px;margin:18px;line-height:.9;text-shadow:0 0 30px rgba(255,255,255,.7)}
-#output{white-space:pre;line-height:5px;font-size:6.5px;text-align:center}
-#wave{width:720px;max-width:93vw;height:30px;display:flex;gap:3px;align-items:center;justify-content:center;margin:14px 0}
-#wave span{width:4px;background:#fff;height:3px;display:block}
-#bar{width:720px;max-width:93vw;height:3px;background:#1a1a1a;margin-top:10px;border-radius:2px;overflow:hidden}
-#bar-inner{height:100%;background:#fff;width:0%}
+body{background:#000;color:#fff;font-family:'JetBrains Mono',monospace;overflow-x:hidden;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+#lyric{font-size:52px;font-weight:800;text-align:center;margin-top:60px;line-height:1.1;letter-spacing:-1px}
+#output{white-space:pre;line-height:5px;font-size:5px;text-align:center;margin-top:20px;letter-spacing:1px}
+#wave{width:720px;max-width:93vw;height:50px;display:flex;align-items:center;gap:3px;justify-content:center;margin:20px auto}
+#wave span{width:4px;background:#fff;display:block;border-radius:10px;height:8px;transition:height.1s}
+#bar{width:720px;max-width:93vw;height:4px;background:#222;margin:10px auto;border-radius:10px;overflow:hidden}
+#bar-inner{height:100%;background:#fff;width:0%;transition:width.2s}
 #top{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10}
-#top button{background:#111;border:1px solid #444;color:#fff;padding:9px 18px;border-radius:24px;cursor:pointer;font-family:inherit;font-weight:700}
+#top button{background:#111;border:1px solid #333;color:#fff;padding:10px 22px;border-radius:100px;cursor:pointer;font-weight:700}
 video,canvas,img{display:none}
-@media(max-width:600px){#lyric{font-size:28px} #output{font-size:5px;line-height:4.2px}}
+@media(max-width:600px){#lyric{font-size:26px;margin-top:70px}#output{font-size:3px;line-height:3px}}
 </style>
 </head>
 <body>
-<div id="top"><button id="playBtn">⏸ PAUSE</button></div>
+<div id="top"><button id="playBtn">▶ PLAY FOR SYERA</button></div>
 <div id="lyric">Only see your face<br>when I close my eyes</div>
 <div id="output">Loading video...</div>
 <div id="wave"></div>
 <div id="bar"><div id="bar-inner"></div></div>
-<video id="vid" autoplay muted loop playsinline></video>
-<canvas id="c"></canvas>
-<img id="imgSrc">
+<video id="video" muted playsinline crossorigin="anonymous"></video>
+<canvas id="canvas"></canvas>
+<img id="img">
 <script>
-const chars=".:-=+*#%@";
-const output=document.getElementById('output'),lyricEl=document.getElementById('lyric'),video=document.getElementById('vid'),canvas=document.getElementById('c'),ctx=canvas.getContext('2d',{willReadFrequently:true}),barInner=document.getElementById('bar-inner'),wave=document.getElementById('wave');
-const W=170,H=95;canvas.width=W;canvas.height=H;
-for(let i=0;i<80;i++){let s=document.createElement('span');wave.appendChild(s)}
-const bars=[...wave.children];
-const lyrics=[{t:0,text:"Only see your face<br>when I close my eyes"},{t:2.5,text:"Can I get a kiss?"},{t:4,text:"And can you make it<br>last forever?"},{t:7,text:"I said I'm about to<br>go to war"},{t:10,text:"And I don't know<br>if I'll see you again"},{t:13,text:"SYERA ❤️"},{t:15,text:"This is for you"},{t:17,text:"For My Syera ✨"},{t:18.5,text:"Only see your face<br>when I close my eyes"},{t:21,text:"I Love You<br>Syera"}];
-const imgSrc=document.getElementById('imgSrc');
-video.src="video.mp4"; imgSrc.src="syera.jpg";
-function toAscii(){try{const d=ctx.getImageData(0,0,W,H).data;let s="";for(let y=0;y<H;y++){for(let x=0;x<W;x++){let i=(y*W+x)*4;let br=(d[i]*0.3+d[i+1]*0.59+d[i+2]*0.11)/255;let idx=Math.floor(br*(chars.length-1));s+=chars[idx];}s+="\n";}output.textContent=s;}catch(e){}}
-let start=null,raf=null,curText="";
-function loop(t){if(!start)start=t;let e=(t-start)/1000%24;if(e<14){if(video.readyState>=2)ctx.drawImage(video,0,0,W,H);}else{if(imgSrc.complete&&imgSrc.naturalWidth>0){let zoom=1+Math.sin((t-start)/1000*0.4)*0.07;let iw=W*zoom,ih=H*zoom;ctx.drawImage(imgSrc,(W-iw)/2,(H-ih)/2,iw,ih);}}toAscii();let txt="";for(let l of lyrics)if(e>=l.t)txt=l.text;if(txt!==curText){curText=txt;lyricEl.innerHTML=txt;}bars.forEach((b,i)=>{b.style.height=(3+Math.abs(Math.sin(e*5+i*0.35))*28)+"px";});barInner.style.width=(e/24*100)+"%";raf=requestAnimationFrame(loop);}
-document.getElementById('playBtn').onclick=()=>{if(raf){cancelAnimationFrame(raf);raf=null;video.pause();playBtn.textContent="▶ PLAY";}else{start=null;raf=requestAnimationFrame(loop);video.play();playBtn.textContent="⏸ PAUSE";}};
-video.addEventListener('canplay',()=>{if(!raf)raf=requestAnimationFrame(loop);});
-setTimeout(()=>{if(!raf)raf=requestAnimationFrame(loop);},1200);
-</script>
-</body>
-</html>
+const chars=".:-=+*%#@";
+const output=document.getElementById('output');
+const video=document.getElementById('video');
+const canvas=document.getElementById('canvas');
+const ctx=canvas.getContext('2d',{willReadFrequently:true});
+const img=document.getElementById('img');
+const wave=document.getElementById('wave');
+const bar=document.getElementById('bar-inner');
+const playBtn=document.getElementById('playBtn');
+for(let i=0;i<40;i++){let s=document.createElement('span');wave.appendChild(s);}
+const waveBars=wave.querySelectorAll('span');
+let audioCtx, analyser, dataArray, isVideoMode=false, animId;
+
+video.src='./video.mp4';
+img.src='./syera.jpg';
+
+function initAudio(){
+ audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+ analyser=audioCtx.createAnalyser();analyser.fftSize=128;
+ dataArray=new Uint8Array(analyser.frequencyBinCount);
+ const src=audioCtx.createMediaElementSource(video);
+ src.connect(analyser);analyser.connect(audioCtx.destination);
+}
+function drawWave(){
+ if(!analyser)return;analyser.getByteFrequencyData(dataArray);
+ waveBars.forEach((b,i)=>{let v=dataArray[i*2]||8;b.style.height=(8+v*0.45)+'px';b.style.opacity=0.3+v/300});
+}
+function renderAscii(w,h,scaleW=80){
+ let cols=scaleW;let rows=Math.floor(cols*(h/w)*0.5);
+ canvas.width=cols;canvas.height=rows;
+ ctx.drawImage(isVideoMode?video:img,0,0,cols,rows);
+ let data=ctx.getImageData(0,0,cols,rows).data;let txt='';
+ for(let y=0;y<rows;y++){for(let x=0;x<cols;x++){let i=(y*cols+x)*4;let bright=(data[i]+data[i+1]+data[i+2])/3;txt+=chars[Math.floor(bright/255*(chars.length-1))];}txt+='\n';}
+ output.textContent=txt;
+}
+function loop(){
+ bar
