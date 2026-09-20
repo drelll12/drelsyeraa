@@ -1,93 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>About You - For Syera</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About You - Syera</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&display=swap');
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#07000f;color:#fff;overflow:hidden;height:100vh;font-family:'JetBrains Mono',monospace;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#stars{position:fixed;inset:0;z-index:0}
-#center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
-#lyric{font-size:38px;font-weight:800;line-height:1.05;text-align:center;min-height:110px;max-width:92vw;background:linear-gradient(180deg,#fff,#ffb3de);-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 20px #ff2a8a)}
-#asciiWrap{margin-top:18px;padding:14px;border-radius:18px;background:rgba(255,255,255,0.05);backdrop-filter:blur(16px);border:1px solid rgba(255,100,180,.25);box-shadow:0 0 60px rgba(255,42,138,.25)}
-#output{white-space:pre;line-height:6px;font-size:6px;color:#ffc6e6;text-shadow:0 0 10px #ff2a8a;text-align:center}
-#wave{width:760px;max-width:92vw;height:50px;display:flex;gap:4px;justify-content:center;margin-top:20px}
-#wave span{width:5px;background:linear-gradient(180deg,#fff,#ff2a8a);border-radius:10px;height:8px;animation:wave.6s infinite alternate}
-@keyframes wave{to{height:35px}}
-#bar{width:760px;max-width:92vw;height:5px;background:rgba(255,255,255,.1);border-radius:100px;overflow:hidden;margin-top:12px}
-#bar-inner{height:100%;width:0%;background:linear-gradient(90deg,#fff,#ff2a8a)}
-#playBtn{position:fixed;z-index:10;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(90deg,#ff2a8a,#ff0055);border:0;color:#fff;padding:18px 40px;border-radius:100px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 0 40px #ff2a8a}
-#yt{position:fixed;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+body{margin:0;background:#000;color:#fff;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;overflow:hidden}
+#l{font-size:32px;font-weight:900;text-align:center;line-height:1.1;min-height:90px;color:#fff;text-shadow:0 0 20px #ff2a8a;z-index:2}
+#o{white-space:pre;font-size:6px;line-height:5px;color:#ff8fc7;text-align:center;margin-top:15px;background:rgba(255,42,138,.08);padding:10px;border-radius:12px;border:1px solid rgba(255,42,138,.3);box-shadow:0 0 20px rgba(255,42,138,.3)}
+#bar{width:80%;max-width:500px;height:4px;background:#222;margin-top:15px;border-radius:10px;overflow:hidden}#bar i{display:block;height:100%;background:#ff2a8a;width:0%;transition:width.2s}
 video,canvas,img{display:none}
-</style>
-</head>
+</style></head>
 <body>
-<canvas id="stars"></canvas>
-<div id="center">
-  <button id="playBtn">▶ PLAY ABOUT YOU FOR SYERA</button>
-  <div id="lyric">Click PLAY dulu...</div>
-  <div id="asciiWrap"><div id="output">LOADING SYERA...</div></div>
-  <div id="wave"></div>
-  <div id="bar"><div id="bar-inner"></div></div>
-</div>
-<div id="yt"></div>
-<video id="video" muted playsinline loop></video>
-<canvas id="canvas"></canvas>
+<div id="l">Loading...</div>
+<div id="o">LOADING SYERAA...</div>
+<div id="bar"><i id="p"></i></div>
+
+<video id="v" autoplay muted loop playsinline></video>
+<canvas id="c"></canvas>
 <img id="img">
-<script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
-const sc=document.getElementById('stars'),sctx=sc.getContext('2d');
-function rs(){sc.width=innerWidth;sc.height=innerHeight}rs();onresize=rs;
-let stars=[...Array(180)].map(()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.5,s:Math.random()*0.6+0.2}));
-(function a(){sctx.clearRect(0,0,sc.width,sc.height);stars.forEach(o=>{o.y-=o.s;if(o.y<0){o.y=innerHeight;o.x=Math.random()*innerWidth}sctx.fillStyle='rgba(255,180,220,.8)';sctx.beginPath();sctx.arc(o.x,o.y,o.r,0,7);sctx.fill()});requestAnimationFrame(a)})();
+const l=document.getElementById('l'), o=document.getElementById('o'), v=document.getElementById('v'), c=document.getElementById('c'), x=c.getContext('2d',{willReadFrequently:true}), img=document.getElementById('img'), bar=document.getElementById('p');
+v.src='./video.mp4'; img.src='./syera.jpg';
 
-const lyrics=[
+const L=[
 [0,"I know a place..."],
-[3,"It's somewhere I go when I need<br>to remember your face"],
-[8,"We get married in our heads"],
-[11,"Do you think I have forgotten?"],
-[15,"Do you think I have forgotten<br>about you?"],
-[20,"You and I, we're alive"],
-[24,"With nothing to do, I could lay<br>and just look in your eyes"],
-[29,"Hold on and hope that we'll find<br>our way back"],
-[34,"Do you think I have forgotten<br>about you?"],
-[39,"There was something 'bout you<br>that now I can't remember"],
-[44,"It's the same damn thing that made<br>my heart surrender"],
-[49,"And I miss you on a train,<br>I miss you in the morning"],
-[54,"I never know what to think about..."],
-[57,"I think about you<br>About you 💖"],
-[62,"Do you think I have forgotten<br>about you?"],
-[67,"About you... Syeraa"],
-[72,"I will always think about you"]
+[2,"It's somewhere I go<br>when I need to remember<br>your face"],
+[5,"We get married<br>in our heads"],
+[8,"Do you think I have<br>forgotten?"],
+[11,"Do you think I have<br>forgotten about you?"],
+[15,"You and I, we're alive"],
+[18,"With nothing to do, I could<br>lay and just look in<br>your eyes"],
+[22,"Do you think I have<br>forgotten about you?"],
+[27,"There was something<br>'bout you..."],
+[30,"I think about you<br>About you 💖"],
+[35,"About you... Syeraa"]
 ];
-
-const chars=" ·-=+*%#@█";
-const out=document.getElementById('output'),video=document.getElementById('video'),canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d',{willReadFrequently:true}),img=document.getElementById('img'),bar=document.getElementById('bar-inner'),playBtn=document.getElementById('playBtn'),lyricEl=document.getElementById('lyric');
-video.src='./video.mp4';img.src='./syera.jpg';
-let player, timer=null, t=0;
-function renderASCII(w,h,cols,src){
- canvas.width=cols;let rows=Math.floor(cols*(h/w)*0.48);canvas.height=rows;
- ctx.drawImage(src,0,0,cols,rows);
- let d=ctx.getImageData(0,0,cols,rows).data,txt='';
- for(let y=0;y<rows;y++){for(let x=0;x<cols;x++){let i=(y*cols+x)*4;let b=(d[i]+d[i+1]+d[i+2])/3;txt+=chars[Math.floor(b/255*(chars.length-1))];}txt+='\n';}
- out.textContent=txt;
+const CH=".:i-=+*#%@";
+function draw(src,w,h,cols){
+ c.width=cols; let rows=Math.floor(cols*(h/w)*0.45); c.height=rows;
+ x.drawImage(src,0,0,cols,rows);
+ let d=x.getImageData(0,0,cols,rows).data,s="";
+ for(let y=0;y<rows;y++){for(let xx=0;xx<cols;xx++){let i=(y*cols+xx)*4;let b=(d[i]+d[i+1]+d[i+2])/3; s+=CH[Math.floor(b/255*(CH.length-1))];}s+="\n";}
+ o.textContent=s;
 }
-function loop(){
- if(player && player.getCurrentTime){t=player.getCurrentTime();bar.style.width=Math.min(t/75*100,100)+'%';let cur=lyrics.filter(l=>t>=l[0]).pop();if(cur)lyricEl.innerHTML=cur[1];}
- if(video.readyState>=2)renderASCII(video.videoWidth,video.videoHeight,110,video);
- requestAnimationFrame(loop);
+let start=performance.now();
+function loop(now){
+ let t=(now-start)/1000;
+ bar.style.width=Math.min(t/38*100,100)+"%";
+ let cur=L.filter(a=>t>=a[0]).pop();
+ if(cur) l.innerHTML=cur[1];
+ if(v.readyState>=2 && v.currentTime>0) draw(v,v.videoWidth,v.videoHeight,85);
+ else if(img.complete && img.naturalWidth) draw(img,img.naturalWidth,img.naturalHeight,75);
+ if(t<40) requestAnimationFrame(loop);
+ else l.innerHTML="About you...<br>Syeraa forever 💖";
 }
-function onYouTubeIframeAPIReady(){
- player=new YT.Player('yt',{height:'1',width:'1',videoId:'BnxLMPhlJ3Q',playerVars:{playsinline:1},events:{onReady:()=>{out.textContent='READY - CLICK PLAY 💖';}}});
-}
-playBtn.onclick=()=>{
- playBtn.style.display='none';
- player.playVideo();video.play();
- lyricEl.innerHTML="I know a place...";
- loop();
-};
-img.onload=()=>{renderASCII(img.naturalWidth,img.naturalHeight,90,img);};
-</script>
-</body>
-</html>
+v.onloadeddata=()=>{v.play(); requestAnimationFrame(loop);};
+img.onload=()=>{if(v.readyState<2) requestAnimationFrame(loop);};
+setTimeout(()=>{if(o.textContent.includes("LOADING")) requestAnimationFrame(loop);},1500);
+</script></body></html>
